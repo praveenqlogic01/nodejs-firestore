@@ -72,6 +72,7 @@ class FirestoreClient {
   constructor(opts) {
     opts = opts || {};
     this._descriptors = {};
+    this.timeout = opts.timeout || opts.deadline;
 
     if (global.isBrowser) {
       // If we're in browser, we use gRPC fallback.
@@ -992,6 +993,10 @@ class FirestoreClient {
     ] = gax.routingHeader.fromParams({
       database: request.database,
     });
+
+    if (this.timeout) {
+      options = Object.assign({}, options, {timeout: this.timeout});
+    }
 
     return this._innerApiCalls.commit(request, options, callback);
   }
